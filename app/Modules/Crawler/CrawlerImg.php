@@ -14,7 +14,11 @@ class CrawlerImg extends Crawler
     protected $imgCount;
     protected $elements;
 
-
+    public function __construct($baseUrl, $levelMax = null, $searchMax = null, $query)
+    {
+        parent::__construct($baseUrl, $levelMax, $searchMax, $query);
+    }
+    
     public function startCrawlImg($linkStart,Commands $output)
     {
         $output->line('Сканирую карту сайта...');
