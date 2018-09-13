@@ -6,17 +6,20 @@ use Goutte\Client;
 use App\Console\Commands\Crawler as Commands;
 use App\Models\CrawlerImgModel;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
+
 class CrawlerImg extends Crawler
 {
-    /**
-     * @var int $imgCount
-     */
+    /** @var int $imgCount */
     protected $imgCount;
+
+
 
     public function __construct($baseUrl, $levelMax = null, $searchMax = null, $query)
     {
         parent::__construct($baseUrl, $levelMax, $searchMax, $query);
+
     }
+
 
     public function startCrawlImg(Commands $output)
     {
@@ -29,6 +32,7 @@ class CrawlerImg extends Crawler
 
         $output->info('Сканирование завершено!!!');
     }
+
 
     protected function selectElements(Commands $output)
     {
@@ -50,20 +54,17 @@ class CrawlerImg extends Crawler
 
             $this->filterElements($images);
 
-            $crawlerImg=new CrawlerImgModel();
-            $crawlerImg->page_link=$link;
-            $crawlerImg->cont_img=$this->imgCount;
-            $crawlerImg->time_load=round(microtime(true)-$timeStart,5);
-
-            if(!$crawlerImg->save()){
-                $output->error('Ошибка сохранения данных!!!');
-            }
+            $Img = new CrawlerImgModel();
+            $Img->page_link = $link;
+            $Img->cont_img = $this->imgCount;
+            $Img->time_load = round(microtime(true)-$timeStart,5);
+            $Img->save();
         }
     }
 
+
     protected function filterElements($images)
     {
-
         foreach ( $images as $key => $img )
         {
             $this->Url->setLincParts($img);

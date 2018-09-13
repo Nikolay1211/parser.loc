@@ -44,6 +44,7 @@ abstract class Crawler
 
     abstract protected function selectElements(Commands $output);
 
+
     public function __construct($baseUrl,$levelMax=null,$searchMax=null,$query)
     {
         $this->baseUrl = $baseUrl;
@@ -60,6 +61,7 @@ abstract class Crawler
 
         $this->Url = new Url($baseUrl);
     }
+
 
     protected function start()
     {
