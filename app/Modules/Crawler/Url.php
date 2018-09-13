@@ -12,10 +12,10 @@ namespace App\Modules\Crawler;
 class Url implements UrlInterface
 {
 
-    /** @var array */
+    /** @var string */
     protected $scheme;
 
-    /** @var array */
+    /** @var string */
     protected $domain;
 
     /** @var array */
