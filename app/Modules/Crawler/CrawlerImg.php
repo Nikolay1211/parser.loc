@@ -12,23 +12,21 @@ class CrawlerImg extends Crawler
      * @var int $imgCount
      */
     protected $imgCount;
-    protected $elements;
 
     public function __construct($baseUrl, $levelMax = null, $searchMax = null, $query)
     {
         parent::__construct($baseUrl, $levelMax, $searchMax, $query);
     }
-    
-    public function startCrawlImg($linkStart,Commands $output)
-    {
-        $output->line('Сканирую карту сайта...');
 
-        $this->start($linkStart);
+    public function startCrawlImg(Commands $output)
+    {
+        $this->start();
 
         $output->line('Карта сайта построена...');
         $output->line('Считаю теги <img>');
 
         $this->selectElements($output);
+
         $output->info('Сканирование завершено!!!');
     }
 
@@ -41,6 +39,7 @@ class CrawlerImg extends Crawler
         foreach($links as $link)
         {
             $output->line('   => '.$link);
+
             $timeStart=microtime(true);
 
             $crawler=$client->request('GET',$link) ;
@@ -64,16 +63,18 @@ class CrawlerImg extends Crawler
 
     protected function filterElements($images)
     {
+
         foreach ( $images as $key => $img )
         {
-            $linkParts = parse_url($img);
+            $this->Url->setLincParts($img);
 
-            if ($this->comparisonHost($linkParts)) {
-                unset($images[$key]);
+            if ($this->Url->isEmptyHostLinkParts() || $this->Url->isSchemeParts() || $this->Url->isDomainParts())
+            {
+                continue;
             }
-        }
 
-        $this->imgCount=count($images);
+            $this->imgCount++;
+        }
     }
 
 }

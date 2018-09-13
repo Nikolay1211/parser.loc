@@ -48,13 +48,14 @@ class Crawler extends Command
         $this->levelMax =$this->option('level');
         $this->searchMax =$this->option('search');
         $this->query=$this->option('query');
+
         $this->info('Запущено сканирование страниц.');
         $this->info('Стартовая странца:'.$this->baseUrl);
         $this->info('Максимальное количество страниц:'.$this->searchMax);
         $this->info('Максимальная глубина вложености: '. $this->levelMax);
+        $this->line('Сканирую карту сайта...');
 
         $crawler = new CrawlerImg($this->baseUrl,$this->levelMax,$this->searchMax,$this->query);
-
-        $crawler->startCrawlImg($this->baseUrl,$this);
+        $crawler->startCrawlImg($this);
     }
 }
