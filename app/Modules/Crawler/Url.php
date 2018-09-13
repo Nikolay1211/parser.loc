@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Стажер
- * Date: 13.09.2018
- * Time: 14:40
- */
 
 namespace App\Modules\Crawler;
 
