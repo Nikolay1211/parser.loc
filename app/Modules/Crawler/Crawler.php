@@ -3,10 +3,9 @@
 namespace App\Modules\Crawler;
 
 use Goutte\Client;
-use App\Console\Commands\Crawler as Commands;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
-abstract class Crawler
+class Crawler implements CrawlerInterface
 {
     /** @var string */
     protected $baseUrl;
@@ -42,10 +41,7 @@ abstract class Crawler
     protected $Url;
 
 
-    abstract protected function selectElements(Commands $output);
-
-
-    public function __construct($baseUrl,$levelMax=null,$searchMax=null,$query)
+    public function __construct($baseUrl,$levelMax=null,$searchMax=null,$query=false)
     {
         $this->baseUrl = $baseUrl;
 
@@ -60,10 +56,10 @@ abstract class Crawler
         $this->query=$query;
 
         $this->Url = new Url($baseUrl);
+
     }
 
-
-    protected function start()
+    public function create()
     {
         $client= new Client();
 
@@ -82,12 +78,15 @@ abstract class Crawler
             $this->processLinksOnPage( $crawler);
         }
         return $this;
+
     }
 
 
-    protected function processLinksOnPage(DomCrawler $crawler) {
+    public function processLinksOnPage(DomCrawler $crawler) {
 
         $links = $this->getLinksOnPage( $crawler );
+
+        $links = $this->filter($links);
 
         foreach ( $links as $key => $link )
         {
@@ -97,7 +96,7 @@ abstract class Crawler
     }
 
 
-    protected function getLinksOnPage( DomCrawler $crawler )
+    public function getLinksOnPage( DomCrawler $crawler )
     {
         $links = $crawler->filter('a')->each(function (DomCrawler $node) {
 
@@ -105,19 +104,19 @@ abstract class Crawler
 
         });
 
-        return $this->filter($links);
+        return $links;
     }
 
 
-    protected function filter($links)
+    public function filter($links)
     {
         $linksSkan=[];
 
-        foreach ( $links as $key => $link )
+        foreach ( $links as $link )
         {
             $this->Url->setLincParts($link);
 
-            if ($this->Url->isEmptyHostLinkParts() || $this->Url->isSchemeParts() || $this->Url->isDomainParts() || $this->isLinkIgnore($link))
+            if (!$this->Url->isHostLinkParts() || $this->Url->isSchemeParts() || $this->Url->isDomainParts() || $this->isLinkIgnore($link))
             {
                 continue;
             }
@@ -143,7 +142,7 @@ abstract class Crawler
     }
 
 
-    protected function processLink($link) {
+    public function processLink($link) {
 
         if ( empty( $this->domainLinks[$link] ) )
         {
@@ -165,7 +164,7 @@ abstract class Crawler
     }
 
 
-    protected function crawlerStop()
+    public function crawlerStop()
     {
         if ($this->isSearchMax()) {
             return false;
@@ -174,25 +173,25 @@ abstract class Crawler
     }
 
 
-    protected function getDomainLinks()
+    public function getDomainLinks()
     {
         return $this->domainLinks;
     }
 
 
-    protected function getDomainLinksCount()
+    public function getDomainLinksCount()
     {
         return $this->domainLinksCount;
     }
 
 
-    protected function getSearchMax()
+    public function getSearchMax()
     {
         return $this->searchMax;
     }
 
 
-    protected function isSearchMax()
+    public function isSearchMax()
     {
         return is_null($this->searchMax);
     }
@@ -203,17 +202,17 @@ abstract class Crawler
         return $this->levelMax;
     }
 
-    protected function isLevelMax()
+    public function isLevelMax()
     {
         return is_null($this->levelMax);
     }
 
-    protected function isLinkIgnore($link)
+    public function isLinkIgnore($link)
     {
         return str_contains($link,$this->linkIgnore);
     }
 
-    protected function getQuery()
+    public function getQuery()
     {
         return $this->query;
     }

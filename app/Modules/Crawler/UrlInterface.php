@@ -8,7 +8,7 @@ interface UrlInterface
     public function setLincParts($link);
     public function isSchemeParts();
     public function isDomainParts();
-    public function isEmptyHostLinkParts();
+    public function isHostLinkParts();
     public function isPathLinkParts();
     public function isQueryLinkParts();
     public function segments();

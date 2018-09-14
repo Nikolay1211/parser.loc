@@ -3,79 +3,76 @@
 namespace App\Modules\Crawler;
 
 use Goutte\Client;
-use App\Console\Commands\Crawler as Commands;
 use App\Models\CrawlerImgModel;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class CrawlerImg extends Crawler
 {
     /** @var int $imgCount */
-    protected $imgCount;
+    protected $imgCount=0;
 
-
-
-    public function __construct($baseUrl, $levelMax = null, $searchMax = null, $query)
+    public function __construct($baseUrl, $levelMax = null, $searchMax = null, bool $query = false)
     {
         parent::__construct($baseUrl, $levelMax, $searchMax, $query);
-
     }
 
 
-    public function startCrawlImg(Commands $output)
-    {
-        $this->start();
-
-        $output->line('Карта сайта построена...');
-        $output->line('Считаю теги <img>');
-
-        $this->selectElements($output);
-
-        $output->info('Сканирование завершено!!!');
-    }
-
-
-    protected function selectElements(Commands $output)
+    public function CrawledImg()
     {
         $client= new Client();
 
         $links=$this->getDomainLinks();
 
-        foreach($links as $link)
+        foreach($links as $key=>$link)
         {
-            $output->line('   => '.$link);
-
             $timeStart=microtime(true);
+
+            echo '   => '.$link .PHP_EOL;
 
             $crawler=$client->request('GET',$link) ;
 
-            $images = $crawler->filter( 'img' )->each( function ( DomCrawler $node ){
-                return $node->image()->getUri();
-            });
+            $images= $this->eachImg($crawler);
 
             $this->filterElements($images);
 
-            $Img = new CrawlerImgModel();
-            $Img->page_link = $link;
-            $Img->cont_img = $this->imgCount;
-            $Img->time_load = round(microtime(true)-$timeStart,5);
-            $Img->save();
+            $this->saveImg($link,$timeStart);
         }
     }
 
 
-    protected function filterElements($images)
+    public function eachImg(DomCrawler $crawler)
     {
-        foreach ( $images as $key => $img )
+        $images = $crawler->filter( 'img' )->each( function ( DomCrawler $node ){
+            return $node->image()->getUri();
+        });
+        return $images;
+    }
+
+
+    public function filterElements($images)
+    {
+        $this->imgCount=0;
+
+        foreach ( $images as $img )
         {
             $this->Url->setLincParts($img);
 
-            if ($this->Url->isEmptyHostLinkParts() || $this->Url->isSchemeParts() || $this->Url->isDomainParts())
+            if (!$this->Url->isHostLinkParts() || $this->Url->isSchemeParts() || $this->Url->isDomainParts())
             {
                 continue;
             }
-
             $this->imgCount++;
         }
+        return $this->imgCount;
+    }
+
+    private function saveImg($link,$timeStart)
+    {
+        $Img = new CrawlerImgModel();
+        $Img->page_link = $link;
+        $Img->cont_img = $this->imgCount;
+        $Img->time_load = round(microtime(true)-$timeStart,5);
+        $Img->save();
     }
 
 }

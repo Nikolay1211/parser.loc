@@ -38,9 +38,9 @@ class Url implements UrlInterface
         return $this->linkParts['host'] !== $this->domain;
     }
 
-    public function isEmptyHostLinkParts()
+    public function isHostLinkParts()
     {
-        return empty($this->linkParts['host']);
+        return isset($this->linkParts['host']);
     }
 
     public function isPathLinkParts()
@@ -55,7 +55,9 @@ class Url implements UrlInterface
 
     public function segments()
     {
-        return explode('/',$this->linkParts['path']);
+        $path = $this->removeSlash($this->linkParts['path']);
+
+        return explode('/',$path);
     }
 
     public function segmentsCount()
@@ -65,7 +67,9 @@ class Url implements UrlInterface
 
     public function removeFragment($link)
     {
-        return explode('#', $link)[0];
+        $link= explode('#', $link)[0];
+
+        return $this->removeSlash($link);
     }
 
     public function removeSlash($link)

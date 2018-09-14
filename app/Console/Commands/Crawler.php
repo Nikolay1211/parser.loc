@@ -53,9 +53,18 @@ class Crawler extends Command
         $this->info('Стартовая странца:'.$this->baseUrl);
         $this->info('Максимальное количество страниц:'.$this->searchMax);
         $this->info('Максимальная глубина вложености: '. $this->levelMax);
-        $this->line('Сканирую карту сайта...');
 
         $crawler = new CrawlerImg($this->baseUrl,$this->levelMax,$this->searchMax,$this->query);
-        $crawler->startCrawlImg($this);
+
+        $this->line('Сканирую карту сайта...');
+
+        $crawler->create();
+
+        $this->line('Карта сайта построена...');
+        $this->line('Считаю теги <img>');
+
+        $crawler->CrawledImg();
+
+        $this->info('Сканирование завершено!!!');
     }
 }
