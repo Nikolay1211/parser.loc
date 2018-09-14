@@ -76,4 +76,5 @@ class Url implements UrlInterface
     {
         return $link[strlen($link)-1] !== '/' ? $link : substr($link,0,-1);
     }
+
 }

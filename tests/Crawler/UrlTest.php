@@ -8,6 +8,7 @@ use App\Modules\Crawler\Url;
 
 class UrlTest extends TestCase
 {
+
     /** @var Url */
     protected $Url;
 

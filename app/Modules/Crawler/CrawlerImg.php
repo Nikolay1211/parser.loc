@@ -75,4 +75,5 @@ class CrawlerImg extends Crawler
         $Img->save();
     }
 
+
 }

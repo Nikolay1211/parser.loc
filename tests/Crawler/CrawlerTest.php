@@ -8,6 +8,7 @@ use App\Modules\Crawler\CrawlerImg;
 
 class CrawlerTest extends TestCase
 {
+
     protected $Crawler;
 
     public function filter()

@@ -33,4 +33,5 @@ interface CrawlerInterface
     public function isLinkIgnore($link);
 
     public function getQuery();
+
 }

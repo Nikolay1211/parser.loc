@@ -6,6 +6,7 @@ use Tests\TestCase;
 
 class CrawlerImgControllerTest extends TestCase {
 
+
     public function testIndex()
     {
         $response = $this->get('/');

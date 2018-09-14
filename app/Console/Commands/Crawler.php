@@ -67,4 +67,5 @@ class Crawler extends Command
 
         $this->info('Сканирование завершено!!!');
     }
+
 }
